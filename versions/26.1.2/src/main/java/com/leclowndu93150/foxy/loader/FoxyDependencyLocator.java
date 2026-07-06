@@ -10,7 +10,7 @@ import net.neoforged.neoforgespi.locating.IDependencyLocator;
 import net.neoforged.neoforgespi.locating.IDiscoveryPipeline;
 import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.ModFileDiscoveryAttributes;
-
+import java.io.Reader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,7 +25,7 @@ public class FoxyDependencyLocator implements IDependencyLocator {
     @Override
     public void scanMods(List<IModFile> loadedMods, IDiscoveryPipeline pipeline) {
         for (IModFile mod : loadedMods) {
-            Path fabricJsonPath = mod.findResource("fabric.mod.json");
+            Path fabricJsonPath = mod.getSecureJar().getPath("fabric.mod.json");
             if (!Files.exists(fabricJsonPath)) {
                 continue;
             }
