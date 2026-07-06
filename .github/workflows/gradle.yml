@@ -24,12 +24,10 @@ jobs:
       - name: Gradle build
         run: |
           ./gradlew build
-          ls -lahR
-          find . -path "*/build/*"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: voxy-artifacts
-          path: build/libs/*.jar
+          path: ./versions/26.1.2/build/libs/*.jar
           archive: false
