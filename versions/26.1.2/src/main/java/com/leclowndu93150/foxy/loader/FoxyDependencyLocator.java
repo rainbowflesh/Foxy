@@ -25,14 +25,17 @@ public class FoxyDependencyLocator implements IDependencyLocator {
     @Override
     public void scanMods(List<IModFile> loadedMods, IDiscoveryPipeline pipeline) {
         for (IModFile mod : loadedMods) {
-            Path fabricJsonPath = mod.findResource("fabric.mod.json");
-            if (!Files.exists(fabricJsonPath)) {
+            JarContents contents = mod.getContents();
+            if (contents == null || !contents.containsFile("fabric.mod.json")) {
                 continue;
             }
-            try (Reader reader = Files.newBufferedReader(fabricJsonPath)) {
-                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+            try (InputStream is = contents.openFile("fabric.mod.json")) {
+                if (is == null) {
+                    continue;
+                }
+                JsonObject json = JsonParser.parseReader(new InputStreamReader(is, StandardCharsets.UTF_8)).getAsJsonObject();
                 if (json.has("id") && "voxy".equals(json.get("id").getAsString())) {
-                    extractNestedJars(mod.getContents(), pipeline);
+                    extractNestedJars(contents, pipeline);
                     break;
                 }
             } catch (Exception e) {
