@@ -25,11 +25,20 @@ public class FoxyDependencyLocator implements IDependencyLocator {
     @Override
     public void scanMods(List<IModFile> loadedMods, IDiscoveryPipeline pipeline) {
         for (IModFile mod : loadedMods) {
-            JarContents contents = mod.getContents();
-            if (!contents.containsFile("fabric.mod.json")) {
+            Path fabricJsonPath = mod.findResource("fabric.mod.json");
+            if (!Files.exists(fabricJsonPath)) {
                 continue;
             }
-            extractNestedJars(contents, pipeline);
+            try (Reader reader = Files.newBufferedReader(fabricJsonPath)) {
+                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+                if (json.has("id") && "voxy".equals(json.get("id").getAsString())) {
+                    extractNestedJars(mod.getContents(), pipeline);
+                    break; 
+                }
+            } catch (Exception e) {
+                System.err.println("[Foxy] Failed to parse fabric.mod.json in mod file: " + mod.getFileName());
+                e.printStackTrace();
+            }
         }
     }
 
