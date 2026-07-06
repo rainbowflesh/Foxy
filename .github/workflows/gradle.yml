@@ -24,7 +24,7 @@ jobs:
       - name: Gradle build
         run: |
           ./gradlew build
-          ls -la
+          ls -lah
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
