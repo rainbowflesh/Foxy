@@ -25,7 +25,7 @@ public class FoxyDependencyLocator implements IDependencyLocator {
     @Override
     public void scanMods(List<IModFile> loadedMods, IDiscoveryPipeline pipeline) {
         for (IModFile mod : loadedMods) {
-            Path fabricJsonPath = mod.getSecureJar().getPath("fabric.mod.json");
+            Path fabricJsonPath = mod.findResource("fabric.mod.json");
             if (!Files.exists(fabricJsonPath)) {
                 continue;
             }
